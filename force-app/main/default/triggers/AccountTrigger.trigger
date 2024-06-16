@@ -1,3 +1,3 @@
-trigger AccountTrigger on Account (before insert) {
-
+trigger AccountTrigger on Account (after insert) {
+    System.debug('After Insert on Account');
 }
