@@ -1,4 +1,4 @@
-trigger AccountTrigger on Account (before insert) {
+trigger AccountTrigger on Account (before insert, after insert) {
 
     if(Trigger.isBefore){
     //After insert: change Account Type to 'Prospect' if null
@@ -20,5 +20,24 @@ trigger AccountTrigger on Account (before insert) {
             acc.Rating = 'Hot';
         }
         }
+    }
+
+    if(Trigger.isAfter){
+    /*Create Contact related to the acc with default values 
+      LastName = 'DefaultContact'
+      Email = 'default@email.com' 
+    */
+    List<Contact> contactsToCreate = new List<Contact>();
+    for(Account acc: Trigger.new) {
+        Contact newContact = new Contact (
+            LastName = 'DefaultContact', 
+            Email = 'default@email.com',
+            AccountId = acc.Id
+        ); 
+        contactsToCreate.add(newContact);
+    }
+    if(!contactsToCreate.isEmpty()) {
+        insert contactsToCreate;
+    }
     }
 }
